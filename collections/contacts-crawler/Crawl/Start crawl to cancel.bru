@@ -1,0 +1,32 @@
+meta {
+  name: Start crawl to cancel
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/crawl
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "urls": ["{{seedUrl}}"],
+    "maxDepth": 3,
+    "maxPagesPerDomain": 500
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 202) {
+    bru.setVar("cancelJobId", res.getBody().jobId);
+  }
+}
+
+tests {
+  test("202 Accepted (defaults applied for omitted fields)", function () {
+    expect(res.getStatus()).to.equal(202);
+    expect(res.getBody().status).to.equal("QUEUED");
+  });
+}

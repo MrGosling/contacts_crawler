@@ -1,0 +1,24 @@
+meta {
+  name: Get cancelled job
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/api/crawl/{{cancelJobId}}
+  body: none
+  auth: none
+}
+
+tests {
+  test("200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("job is CANCELLED and never started", function () {
+    const b = res.getBody();
+    expect(b.status).to.equal("CANCELLED");
+    expect(b.startedAt).to.equal(null);
+    expect(b.pagesFetched).to.equal(0);
+  });
+}

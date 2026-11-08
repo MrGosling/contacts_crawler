@@ -1,0 +1,22 @@
+meta {
+  name: Get unknown job - 404
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{baseUrl}}/api/crawl/00000000-0000-0000-0000-000000000000
+  body: none
+  auth: none
+}
+
+tests {
+  test("404 Not Found", function () {
+    expect(res.getStatus()).to.equal(404);
+  });
+
+  test("ProblemDetail", function () {
+    expect(res.getHeader("content-type")).to.contain("application/problem+json");
+    expect(res.getBody().status).to.equal(404);
+  });
+}

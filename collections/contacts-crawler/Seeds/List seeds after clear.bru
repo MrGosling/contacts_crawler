@@ -1,0 +1,22 @@
+meta {
+  name: List seeds after clear
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/api/seeds
+  body: none
+  auth: none
+}
+
+tests {
+  test("200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("REST seeds removed", function () {
+    expect(res.getBody()).to.not.include("https://example.org/bruno-seed-a");
+    expect(res.getBody()).to.not.include("https://example.org/bruno-seed-b");
+  });
+}

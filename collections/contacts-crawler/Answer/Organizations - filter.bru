@@ -1,0 +1,29 @@
+meta {
+  name: Organizations - filter
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{baseUrl}}/answer/organizations?domain={{domain}}&page=0&size=5
+  body: none
+  auth: none
+}
+
+params:query {
+  domain: {{domain}}
+  page: 0
+  size: 5
+}
+
+tests {
+  test("200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("at most one organization for exact domain", function () {
+    const c = res.getBody().content;
+    expect(c.length).to.be.at.most(1);
+    c.forEach(o => expect(o.domain).to.equal(bru.getEnvVar("domain")));
+  });
+}

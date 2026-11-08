@@ -1,0 +1,36 @@
+meta {
+  name: Answer - sort by type desc
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/answer?sort=type&dir=DESC&size=200
+  body: none
+  auth: none
+}
+
+params:query {
+  sort: type
+  dir: DESC
+  size: 200
+}
+
+docs {
+  Сортировка по `type` — в порядке объявления enum `ContactType`.
+}
+
+tests {
+  const order = ["PHONE", "EMAIL", "ADDRESS", "SOCIAL", "HOURS", "WEBSITE"];
+
+  test("200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("sorted by type desc", function () {
+    const t = res.getBody().content.map(c => order.indexOf(c.type));
+    for (let i = 1; i < t.length; i++) {
+      expect(t[i - 1]).to.be.at.least(t[i]);
+    }
+  });
+}

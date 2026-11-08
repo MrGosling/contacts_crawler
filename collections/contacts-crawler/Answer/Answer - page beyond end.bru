@@ -1,0 +1,23 @@
+meta {
+  name: Answer - page beyond end
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{baseUrl}}/answer?page=100000&size=200
+  body: none
+  auth: none
+}
+
+params:query {
+  page: 100000
+  size: 200
+}
+
+tests {
+  test("200 OK with empty content", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody().content).to.be.an("array").that.is.empty;
+  });
+}

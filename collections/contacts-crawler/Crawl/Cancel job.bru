@@ -1,0 +1,26 @@
+meta {
+  name: Cancel job
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{baseUrl}}/api/crawl/{{cancelJobId}}
+  body: none
+  auth: none
+}
+
+docs {
+  Задание стоит в очереди за `Start blocker crawl` → 202 + снимок со статусом CANCELLED.
+}
+
+tests {
+  test("202 Accepted", function () {
+    expect(res.getStatus()).to.equal(202);
+  });
+
+  test("cancelled job snapshot", function () {
+    expect(res.getBody().jobId).to.equal(bru.getVar("cancelJobId"));
+    expect(res.getBody().status).to.equal("CANCELLED");
+  });
+}

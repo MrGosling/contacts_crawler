@@ -1,0 +1,33 @@
+meta {
+  name: Answer - search q
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/answer?q=RU&size=200
+  body: none
+  auth: none
+}
+
+params:query {
+  q: RU
+  size: 200
+}
+
+docs {
+  `q` — подстрока без учёта регистра по `value` и `normalizedValue`.
+}
+
+tests {
+  test("200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("every item contains q (case-insensitive)", function () {
+    res.getBody().content.forEach(c => {
+      const hay = ((c.value || "") + "\n" + (c.normalizedValue || "")).toLowerCase();
+      expect(hay).to.contain("ru");
+    });
+  });
+}

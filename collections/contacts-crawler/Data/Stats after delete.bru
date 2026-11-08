@@ -1,0 +1,25 @@
+meta {
+  name: Stats after delete
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/answer/stats
+  body: none
+  auth: none
+}
+
+tests {
+  test("200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("total is 0 when deletion is allowed", function () {
+    if (String(bru.getEnvVar("allowDelete")) !== "true") {
+      return;
+    }
+    expect(res.getBody().total).to.equal(0);
+    expect(res.getBody().byType).to.deep.equal({});
+  });
+}

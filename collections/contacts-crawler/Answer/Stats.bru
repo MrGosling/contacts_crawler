@@ -1,0 +1,40 @@
+meta {
+  name: Stats
+  type: http
+  seq: 13
+}
+
+get {
+  url: {{baseUrl}}/answer/stats
+  body: none
+  auth: none
+}
+
+docs {
+  Количество контактов по типам и доменам (parallelStream + groupingByConcurrent).
+}
+
+tests {
+  const b = res.getBody();
+  const sum = o => Object.values(o).reduce((a, n) => a + n, 0);
+
+  test("200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("stats shape", function () {
+    expect(b).to.have.all.keys("total", "byType", "byDomain");
+  });
+
+  test("total = sum(byType) = sum(byDomain)", function () {
+    expect(sum(b.byType)).to.equal(b.total);
+    expect(Object.values(b.byDomain).reduce((a, d) => a + sum(d), 0)).to.equal(b.total);
+  });
+
+  test("total matches /answer totalElements", function () {
+    const expected = bru.getVar("totalContacts");
+    if (expected !== undefined && expected !== null) {
+      expect(b.total).to.equal(Number(expected));
+    }
+  });
+}

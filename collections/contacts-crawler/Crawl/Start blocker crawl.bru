@@ -1,0 +1,37 @@
+meta {
+  name: Start blocker crawl
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/crawl
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "urls": ["{{seedUrl}}", "{{seedUrl}}?blocker=1", "{{seedUrl}}?blocker=2"],
+    "maxDepth": 0,
+    "delayMs": 1000
+  }
+}
+
+docs {
+  Занимает краулер (одновременно выполняется одно задание, Q-3), чтобы следующее задание
+  гарантированно оставалось в статусе QUEUED и его можно было отменить.
+  Три URL одного хоста при per-host rate limit (delayMs ≥ 1000) дают обход длительностью ≥ 2 с.
+}
+
+script:post-response {
+  if (res.getStatus() === 202) {
+    bru.setVar("blockerJobId", res.getBody().jobId);
+  }
+}
+
+tests {
+  test("202 Accepted", function () {
+    expect(res.getStatus()).to.equal(202);
+  });
+}

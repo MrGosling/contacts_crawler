@@ -1,0 +1,43 @@
+meta {
+  name: Start crawl
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/crawl
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "urls": ["{{seedUrl}}"],
+    "maxDepth": 1,
+    "maxPagesPerDomain": 20,
+    "sameDomainOnly": true,
+    "delayMs": 1000
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 202) {
+    bru.setVar("jobId", res.getBody().jobId);
+    bru.setVar("waitAttempts", 0);
+  }
+}
+
+tests {
+  test("202 Accepted", function () {
+    expect(res.getStatus()).to.equal(202);
+  });
+
+  test("status QUEUED", function () {
+    expect(res.getBody().status).to.equal("QUEUED");
+    expect(res.getBody().jobId).to.be.a("string").that.is.not.empty;
+  });
+
+  test("Location header points to job", function () {
+    expect(res.getHeader("location")).to.equal("/api/crawl/" + res.getBody().jobId);
+  });
+}

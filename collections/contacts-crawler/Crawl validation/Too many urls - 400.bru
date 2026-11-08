@@ -1,0 +1,33 @@
+meta {
+  name: Too many urls - 400
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/crawl
+  body: json
+  auth: none
+}
+
+body:json {
+  { "urls": [] }
+}
+
+docs {
+  `urls` — 1..100 элементов; тело с 101 URL формируется в pre-request скрипте.
+}
+
+script:pre-request {
+  const urls = [];
+  for (let i = 0; i < 101; i++) {
+    urls.push("https://example.org/page-" + i);
+  }
+  req.setBody({ urls });
+}
+
+tests {
+  test("400 Bad Request", function () {
+    expect(res.getStatus()).to.equal(400);
+  });
+}

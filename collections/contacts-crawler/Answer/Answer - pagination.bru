@@ -1,0 +1,31 @@
+meta {
+  name: Answer - pagination
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/answer?page=1&size=1
+  body: none
+  auth: none
+}
+
+params:query {
+  page: 1
+  size: 1
+}
+
+tests {
+  const b = res.getBody();
+
+  test("200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("second page of size 1", function () {
+    expect(b.page).to.equal(1);
+    expect(b.size).to.equal(1);
+    expect(b.totalPages).to.equal(b.totalElements);
+    expect(b.content.length).to.equal(b.totalElements > 1 ? 1 : 0);
+  });
+}

@@ -1,0 +1,21 @@
+meta {
+  name: Add empty seeds - 400
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/seeds
+  body: json
+  auth: none
+}
+
+body:json {
+  { "urls": [] }
+}
+
+tests {
+  test("400 Bad Request", function () {
+    expect(res.getStatus()).to.equal(400);
+  });
+}

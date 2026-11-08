@@ -1,0 +1,28 @@
+meta {
+  name: Answer after delete
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/answer
+  body: none
+  auth: none
+}
+
+tests {
+  const allowed = String(bru.getEnvVar("allowDelete")) === "true";
+
+  test("200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test(allowed ? "storage is empty" : "data preserved", function () {
+    if (allowed) {
+      expect(res.getBody().totalElements).to.equal(0);
+      expect(res.getBody().content).to.be.empty;
+    } else {
+      expect(res.getBody().totalElements).to.be.at.least(Number(bru.getVar("totalContacts") || 0));
+    }
+  });
+}

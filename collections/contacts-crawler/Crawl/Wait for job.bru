@@ -1,0 +1,60 @@
+meta {
+  name: Wait for job
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/crawl/{{jobId}}
+  body: none
+  auth: none
+}
+
+docs {
+  Опрашивает задание раз в секунду, пока оно не перейдёт в DONE/FAILED/CANCELLED (максимум `maxWaitAttempts`
+  попыток, по умолчанию 120). Повтор работает в Collection Runner / CLI; при ручном запуске нажмите Send ещё раз.
+}
+
+script:pre-request {
+  const attempts = Number(bru.getVar("waitAttempts") || 0);
+  if (attempts > 0) {
+    await bru.sleep(1000);
+  }
+}
+
+script:post-response {
+  const max = Number(bru.getVar("maxWaitAttempts") || 120);
+  const attempts = Number(bru.getVar("waitAttempts") || 0) + 1;
+  bru.setVar("waitAttempts", attempts);
+  const terminal = ["DONE", "FAILED", "CANCELLED"].includes(res.getBody().status);
+  bru.setVar("jobTerminal", terminal);
+  if (!terminal && attempts < max) {
+    if (bru.runner && typeof bru.runner.setNextRequest === "function") {
+      bru.runner.setNextRequest("Wait for job");
+    } else {
+      bru.setNextRequest("Wait for job");
+    }
+  }
+}
+
+tests {
+  const terminal = bru.getVar("jobTerminal");
+  const max = Number(bru.getVar("maxWaitAttempts") || 120);
+  const done = terminal || Number(bru.getVar("waitAttempts")) >= max;
+
+  test("200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("job finished with DONE", function () {
+    if (!done) {
+      return; // ещё выполняется — запрос будет повторён
+    }
+    const b = res.getBody();
+    expect(b.status).to.equal("DONE");
+    expect(b.finishedAt).to.be.a("string");
+    expect(b.startedAt).to.be.a("string");
+    expect(b.pagesFetched).to.be.at.least(1);
+    expect(b.queueSize).to.equal(0);
+  });
+}

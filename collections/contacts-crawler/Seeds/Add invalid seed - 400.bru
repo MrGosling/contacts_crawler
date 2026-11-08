@@ -1,0 +1,22 @@
+meta {
+  name: Add invalid seed - 400
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/seeds
+  body: json
+  auth: none
+}
+
+body:json {
+  { "urls": ["mailto:info@example.org"] }
+}
+
+tests {
+  test("400 Bad Request", function () {
+    expect(res.getStatus()).to.equal(400);
+    expect(res.getHeader("content-type")).to.contain("application/problem+json");
+  });
+}

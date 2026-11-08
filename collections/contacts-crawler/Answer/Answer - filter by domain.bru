@@ -1,0 +1,25 @@
+meta {
+  name: Answer - filter by domain
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/answer?domain={{domain}}
+  body: none
+  auth: none
+}
+
+params:query {
+  domain: {{domain}}
+}
+
+tests {
+  test("200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("exact domain match", function () {
+    res.getBody().content.forEach(c => expect(c.domain).to.equal(bru.getEnvVar("domain")));
+  });
+}

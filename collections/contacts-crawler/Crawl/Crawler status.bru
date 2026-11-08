@@ -1,0 +1,25 @@
+meta {
+  name: Crawler status
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/crawl/status
+  body: none
+  auth: none
+}
+
+tests {
+  test("200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("status fields", function () {
+    const b = res.getBody();
+    expect(b).to.include.all.keys("currentJobId", "queuedJobs", "queueSize", "activeThreads", "poolSize",
+      "visitedUrls", "engine");
+    expect(["threads", "executor", "forkjoin"]).to.include(b.engine);
+    expect(b.queuedJobs).to.be.at.least(0);
+  });
+}

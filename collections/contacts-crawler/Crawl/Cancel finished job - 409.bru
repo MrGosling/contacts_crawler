@@ -1,0 +1,22 @@
+meta {
+  name: Cancel finished job - 409
+  type: http
+  seq: 10
+}
+
+delete {
+  url: {{baseUrl}}/api/crawl/{{jobId}}
+  body: none
+  auth: none
+}
+
+tests {
+  test("409 Conflict", function () {
+    expect(res.getStatus()).to.equal(409);
+  });
+
+  test("ProblemDetail", function () {
+    expect(res.getHeader("content-type")).to.contain("application/problem+json");
+    expect(res.getBody().status).to.equal(409);
+  });
+}

@@ -1,0 +1,30 @@
+meta {
+  name: Answer - sort by value asc
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/answer?sort=value&dir=asc&size=200
+  body: none
+  auth: none
+}
+
+params:query {
+  sort: value
+  dir: asc
+  size: 200
+}
+
+tests {
+  test("200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("sorted by value asc", function () {
+    const v = res.getBody().content.map(c => c.value);
+    for (let i = 1; i < v.length; i++) {
+      expect(v[i - 1] <= v[i], v[i - 1] + " <= " + v[i]).to.equal(true);
+    }
+  });
+}

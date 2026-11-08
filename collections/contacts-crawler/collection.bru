@@ -1,0 +1,29 @@
+headers {
+  Accept: application/json
+}
+
+docs {
+  # Contacts Crawler — Bruno collection
+
+  Функциональная проверка REST API (docs/requirements/05-api.md).
+
+  ## Окружения
+  - `local` — `mvn spring-boot:run` / профиль `dev` (`allowDelete=true`).
+  - `docker` — `docker compose up -d --build` / профиль `prod` (`allowDelete=false`, `DELETE /api/data` → 403).
+
+  ## Переменные окружения
+  - `baseUrl` — адрес сервиса.
+  - `seedUrl` — стартовый URL обхода. По умолчанию сервис обходит собственный Swagger UI
+    (`http://localhost:8080/...` разрешается внутри приложения/контейнера), поэтому интернет не нужен,
+    но контактов будет 0. Для реальных данных укажите корпоративный сайт, напр. `https://example.org/contacts`.
+  - `domain` — домен для фильтров `/answer` (хост `seedUrl` без `www.`).
+  - `allowDelete` — ожидаемое значение `crawler.api.allow-delete` (`true`/`false`).
+
+  ## Запуск
+  - Bruno GUI: Open Collection → `collections/contacts-crawler`, выбрать окружение, Run Collection.
+  - CLI: `cd collections/contacts-crawler && npx @usebruno/cli run --env docker`.
+
+  Папки выполняются по порядку: `Crawl` создаёт задание и ждёт его завершения (`Wait for job` опрашивает статус
+  до `DONE/FAILED/CANCELLED`), затем `Answer` проверяет результаты. `Data` в конце очищает хранилище
+  (только при `allowDelete=true`).
+}

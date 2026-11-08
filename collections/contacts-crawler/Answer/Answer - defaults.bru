@@ -1,0 +1,52 @@
+meta {
+  name: Answer - defaults
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/answer
+  body: none
+  auth: none
+}
+
+docs {
+  Основной эндпоинт результатов: по умолчанию page=0, size=20, sort=foundAt, dir=desc.
+}
+
+script:post-response {
+  if (res.getStatus() === 200) {
+    bru.setVar("totalContacts", res.getBody().totalElements);
+  }
+}
+
+tests {
+  const b = res.getBody();
+
+  test("200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("page envelope", function () {
+    expect(b).to.have.all.keys("content", "page", "size", "totalElements", "totalPages");
+    expect(b.page).to.equal(0);
+    expect(b.size).to.equal(20);
+    expect(b.content.length).to.be.at.most(20);
+    expect(b.totalPages).to.equal(Math.ceil(b.totalElements / 20));
+  });
+
+  test("contact fields", function () {
+    b.content.forEach(c => {
+      expect(c).to.include.all.keys("id", "type", "value", "normalizedValue", "domain", "sourceUrl", "foundAt");
+      expect(["PHONE", "EMAIL", "ADDRESS", "SOCIAL", "HOURS", "WEBSITE"]).to.include(c.type);
+      expect(c.domain).to.not.match(/^www\./);
+    });
+  });
+
+  test("sorted by foundAt desc", function () {
+    const t = b.content.map(c => Date.parse(c.foundAt));
+    for (let i = 1; i < t.length; i++) {
+      expect(t[i - 1]).to.be.at.least(t[i]);
+    }
+  });
+}

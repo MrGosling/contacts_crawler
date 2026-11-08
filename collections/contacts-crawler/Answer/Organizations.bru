@@ -1,0 +1,39 @@
+meta {
+  name: Organizations
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{baseUrl}}/answer/organizations
+  body: none
+  auth: none
+}
+
+docs {
+  Агрегат по домену (Q-4): домен → название, сайт, телефоны, email, адреса, соцсети.
+}
+
+tests {
+  const b = res.getBody();
+
+  test("200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("page envelope", function () {
+    expect(b).to.have.all.keys("content", "page", "size", "totalElements", "totalPages");
+    expect(b.page).to.equal(0);
+    expect(b.size).to.equal(20);
+  });
+
+  test("organization fields, one per domain, sorted by domain", function () {
+    const domains = b.content.map(o => o.domain);
+    expect(new Set(domains).size).to.equal(domains.length);
+    expect([...domains].sort()).to.deep.equal(domains);
+    b.content.forEach(o => {
+      expect(o).to.have.all.keys("domain", "name", "website", "phones", "emails", "addresses", "socials");
+      ["phones", "emails", "addresses", "socials"].forEach(k => expect(o[k]).to.be.an("array"));
+    });
+  });
+}

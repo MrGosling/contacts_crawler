@@ -1,0 +1,27 @@
+meta {
+  name: page not a number - 400
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/answer?page=abc
+  body: none
+  auth: none
+}
+
+params:query {
+  page: abc
+}
+
+tests {
+  test("400 Bad Request", function () {
+    expect(res.getStatus()).to.equal(400);
+  });
+
+  test("ProblemDetail", function () {
+    expect(res.getHeader("content-type")).to.contain("application/problem+json");
+    expect(res.getBody().status).to.equal(400);
+    expect(res.getBody().instance).to.equal("/answer");
+  });
+}

@@ -1,0 +1,22 @@
+meta {
+  name: Cancel job again
+  type: http
+  seq: 9
+}
+
+delete {
+  url: {{baseUrl}}/api/crawl/{{cancelJobId}}
+  body: none
+  auth: none
+}
+
+docs {
+  Повторная отмена уже отменённого задания идемпотентна → 202.
+}
+
+tests {
+  test("202 Accepted (idempotent)", function () {
+    expect(res.getStatus()).to.equal(202);
+    expect(res.getBody().status).to.equal("CANCELLED");
+  });
+}

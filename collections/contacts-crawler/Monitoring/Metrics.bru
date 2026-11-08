@@ -1,0 +1,23 @@
+meta {
+  name: Metrics
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/actuator/metrics
+  body: none
+  auth: none
+}
+
+tests {
+  test("200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("metric names listed", function () {
+    const names = res.getBody().names;
+    expect(names).to.be.an("array").that.is.not.empty;
+    expect(names).to.include("jvm.threads.live");
+  });
+}

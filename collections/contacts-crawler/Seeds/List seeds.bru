@@ -1,0 +1,21 @@
+meta {
+  name: List seeds
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/seeds
+  body: none
+  auth: none
+}
+
+tests {
+  test("200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("array of URLs", function () {
+    expect(res.getBody()).to.be.an("array");
+  });
+}

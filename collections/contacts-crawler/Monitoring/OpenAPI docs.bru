@@ -1,0 +1,27 @@
+meta {
+  name: OpenAPI docs
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/v3/api-docs
+  body: none
+  auth: none
+}
+
+docs {
+  springdoc-openapi. Swagger UI: `{{baseUrl}}/swagger-ui.html`.
+}
+
+tests {
+  test("200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("documents main endpoints", function () {
+    const paths = Object.keys(res.getBody().paths);
+    ["/api/crawl", "/api/crawl/{jobId}", "/api/crawl/status", "/api/seeds", "/answer", "/answer/organizations", "/answer/stats", "/api/data"]
+      .forEach(p => expect(paths).to.include(p));
+  });
+}

@@ -1,0 +1,29 @@
+meta {
+  name: Answer - filter by type lowercase
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/answer?type=email
+  body: none
+  auth: none
+}
+
+params:query {
+  type: email
+}
+
+tests {
+  test("200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("only EMAIL, normalized to lower case", function () {
+    res.getBody().content.forEach(c => {
+      expect(c.type).to.equal("EMAIL");
+      expect(c.normalizedValue).to.equal(c.normalizedValue.toLowerCase());
+      expect(c.normalizedValue).to.contain("@");
+    });
+  });
+}

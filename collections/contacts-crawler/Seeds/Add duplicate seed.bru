@@ -1,0 +1,27 @@
+meta {
+  name: Add duplicate seed
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/seeds
+  body: json
+  auth: none
+}
+
+body:json {
+  { "urls": ["https://example.org/bruno-seed-a"] }
+}
+
+tests {
+  test("200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("no duplicates", function () {
+    const list = res.getBody();
+    expect(list.filter(u => u === "https://example.org/bruno-seed-a")).to.have.lengthOf(1);
+    expect(new Set(list).size).to.equal(list.length);
+  });
+}

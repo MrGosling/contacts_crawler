@@ -1,0 +1,30 @@
+meta {
+  name: Answer - filter by type
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/answer?type=PHONE&page=0&size=50
+  body: none
+  auth: none
+}
+
+params:query {
+  type: PHONE
+  page: 0
+  size: 50
+}
+
+tests {
+  test("200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("only PHONE in E.164", function () {
+    res.getBody().content.forEach(c => {
+      expect(c.type).to.equal("PHONE");
+      expect(c.normalizedValue).to.match(/^\+\d{8,15}$/);
+    });
+  });
+}

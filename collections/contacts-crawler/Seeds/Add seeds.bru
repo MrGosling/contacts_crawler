@@ -1,0 +1,29 @@
+meta {
+  name: Add seeds
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/seeds
+  body: json
+  auth: none
+}
+
+body:json {
+  { "urls": ["https://example.org/bruno-seed-a", "https://example.org/bruno-seed-b"] }
+}
+
+docs {
+  Seed'ы из REST хранятся в памяти и в `crawler.seeds-api-file` (Q-8). Удаляются запросом `Clear REST seeds`.
+}
+
+tests {
+  test("200 OK", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("resulting list contains added URLs", function () {
+    expect(res.getBody()).to.include.members(["https://example.org/bruno-seed-a", "https://example.org/bruno-seed-b"]);
+  });
+}

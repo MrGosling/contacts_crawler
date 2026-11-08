@@ -1,0 +1,27 @@
+meta {
+  name: size 201 - 400
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/answer?size=201
+  body: none
+  auth: none
+}
+
+params:query {
+  size: 201
+}
+
+tests {
+  test("400 Bad Request", function () {
+    expect(res.getStatus()).to.equal(400);
+  });
+
+  test("ProblemDetail", function () {
+    expect(res.getHeader("content-type")).to.contain("application/problem+json");
+    expect(res.getBody().status).to.equal(400);
+    expect(res.getBody().instance).to.equal("/answer");
+  });
+}

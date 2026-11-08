@@ -1,0 +1,32 @@
+meta {
+  name: Delete all data
+  type: http
+  seq: 1
+}
+
+delete {
+  url: {{baseUrl}}/api/data
+  body: none
+  auth: none
+}
+
+docs {
+  ВНИМАНИЕ: очищает хранилище контактов. 204 при `crawler.api.allow-delete=true` (профиль dev),
+  403 при `false` (профиль prod / Docker). Ожидание задаётся переменной окружения `allowDelete`.
+}
+
+tests {
+  const allowed = String(bru.getEnvVar("allowDelete")) === "true";
+
+  test(allowed ? "204 No Content" : "403 Forbidden", function () {
+    expect(res.getStatus()).to.equal(allowed ? 204 : 403);
+  });
+
+  test("403 is ProblemDetail", function () {
+    if (allowed) {
+      return;
+    }
+    expect(res.getHeader("content-type")).to.contain("application/problem+json");
+    expect(res.getBody().status).to.equal(403);
+  });
+}
