@@ -1,8 +1,7 @@
 package com.example.contactscrawler.model;
 
 /**
- * Ключ уникальности (domain, type, normalizedValue); equals/hashCode. Можно record.
+ * Ключ уникальности (domain, type, normalizedValue).
  */
-public class ContactKey {
-    // TODO: поля и методы см. Javadoc
+public record ContactKey(String domain, ContactType type, String normalizedValue) {
 }

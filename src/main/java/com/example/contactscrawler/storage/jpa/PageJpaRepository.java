@@ -1,8 +1,13 @@
 package com.example.contactscrawler.storage.jpa;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
 /**
- * Spring Data: extends JpaRepository<PageEntity, Long>.
+ * Spring Data репозиторий страниц.
  */
-public interface PageJpaRepository {
-    // TODO: методы см. Javadoc
+public interface PageJpaRepository extends JpaRepository<PageEntity, Long> {
+
+    List<PageEntity> findByJobId(String jobId);
 }

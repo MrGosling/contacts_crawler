@@ -1,10 +1,32 @@
 package com.example.contactscrawler.storage;
 
+import com.example.contactscrawler.model.Contact;
+import com.example.contactscrawler.model.ContactType;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 /**
- * Хранилище контактов (crawler.storage). Методы: void saveAll(Collection<Contact>) — upsert по ContactKey (первые sourceUrl/foundAt,
- * обновление lastSeenAt), List<Contact> findAll(), List<Contact> findByFilter(ContactType type, String domain) (null = любой),
- * long count(), void deleteAll().
+ * Хранилище контактов (crawler.storage). saveAll — upsert по ContactKey: первые sourceUrl/foundAt сохраняются,
+ * обновляется lastSeenAt. Реализации потокобезопасны.
  */
 public interface ContactRepository {
-    // TODO: методы см. Javadoc
+
+    void saveAll(Collection<Contact> contacts);
+
+    List<Contact> findAll();
+
+    /** null = любой тип / домен. */
+    List<Contact> findByFilter(ContactType type, String domain);
+
+    long count();
+
+    void deleteAll();
+
+    /** Название организации по домену (первое найденное сохраняется). */
+    void saveOrganization(String domain, String name, String website);
+
+    /** domain → название организации. */
+    Map<String, String> organizationNames();
 }

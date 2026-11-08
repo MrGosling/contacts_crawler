@@ -1,8 +1,11 @@
 package com.example.contactscrawler.api.dto;
 
+import com.example.contactscrawler.model.ContactType;
+
+import java.util.Map;
+
 /**
- * DTO статистики: long total, Map<ContactType,Long> byType, Map<String, Map<ContactType,Long>> byDomain.
+ * Статистика контактов.
  */
-public class StatsResponse {
-    // TODO: поля и методы см. Javadoc
+public record StatsResponse(long total, Map<ContactType, Long> byType, Map<String, Map<ContactType, Long>> byDomain) {
 }

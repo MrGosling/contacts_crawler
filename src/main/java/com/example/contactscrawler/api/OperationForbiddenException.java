@@ -1,8 +1,10 @@
 package com.example.contactscrawler.api;
 
 /**
- * RuntimeException: операция запрещена конфигурацией (-> 403).
+ * Операция запрещена конфигурацией (→ 403).
  */
-public class OperationForbiddenException {
-    // TODO: поля и методы см. Javadoc
+public class OperationForbiddenException extends RuntimeException {
+    public OperationForbiddenException(String message) {
+        super(message);
+    }
 }

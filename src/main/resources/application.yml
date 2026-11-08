@@ -27,26 +27,33 @@ management:
       exposure:
         include: health,info,metrics
 
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
 # Все настройки краулера — docs/requirements/08-nonfunctional.md
 crawler:
   engine: executor            # threads | executor | forkjoin
   fetcher: webclient          # webclient | resttemplate | feign
-  storage: memory             # memory | file | h2 (h2 — после этапа 4)
+  storage: h2                 # memory | file | h2
   threads: 8
   queue-capacity: 10000
   max-depth: 2
   max-pages-per-domain: 100
   same-domain-only: true
   delay-ms: 1000
+  min-delay-ms: 1000          # нижняя граница delayMs в запросе (D-15; в test = 0)
   per-host-concurrency: 1
   max-page-size: 2MB
   connect-timeout: 5s
   read-timeout: 10s
   max-redirects: 3
   retries: 2
+  retry-backoff: 1s           # backoff 1 с, 2 с
   user-agent: "ContactsCrawler/1.0 (+contact@example.org)"
   seeds: []
   seeds-file: seeds.txt
+  seeds-api-file: data/seeds-api.txt   # seed'ы из POST /api/seeds (Q-8)
   excluded-extensions: [pdf, jpg, jpeg, png, gif, svg, webp, zip, rar, 7z, doc, docx, xls, xlsx, ppt, pptx, mp3, mp4, avi, exe]
   scheduler:
     mode: executor            # executor | spring | off

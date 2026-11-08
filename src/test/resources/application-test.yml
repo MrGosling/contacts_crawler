@@ -5,8 +5,12 @@ spring:
 crawler:
   storage: memory
   delay-ms: 0          # D-15: только для localhost в тестах
+  min-delay-ms: 0
+  retry-backoff: 10ms
+  seeds-file: ""
+  seeds-api-file: target/test-data/seeds-api.txt
   scheduler:
-    mode: off
+    mode: "off"
   storage-file:
     path: target/test-data/contacts.jsonl
   async-log:

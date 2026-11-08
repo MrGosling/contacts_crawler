@@ -1,8 +1,8 @@
 package com.example.contactscrawler.api.dto;
 
 /**
- * DTO общего статуса: currentJobId, queuedJobs, queueSize, activeThreads, poolSize, visitedUrls, engine.
+ * DTO общего статуса краулера.
  */
-public class CrawlerStatusResponse {
-    // TODO: поля и методы см. Javadoc
+public record CrawlerStatusResponse(String currentJobId, int queuedJobs, int queueSize, int activeThreads,
+                                    int poolSize, int visitedUrls, String engine) {
 }

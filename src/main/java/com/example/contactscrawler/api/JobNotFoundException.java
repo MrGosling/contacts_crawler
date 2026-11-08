@@ -1,8 +1,10 @@
 package com.example.contactscrawler.api;
 
 /**
- * RuntimeException: задание с jobId не найдено (-> 404).
+ * Задание с jobId не найдено (→ 404).
  */
-public class JobNotFoundException {
-    // TODO: поля и методы см. Javadoc
+public class JobNotFoundException extends RuntimeException {
+    public JobNotFoundException(String jobId) {
+        super("Crawl job not found: " + jobId);
+    }
 }

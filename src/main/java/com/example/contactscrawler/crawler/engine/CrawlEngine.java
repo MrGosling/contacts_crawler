@@ -1,9 +1,25 @@
 package com.example.contactscrawler.crawler.engine;
 
+import com.example.contactscrawler.crawler.model.CrawlJob;
+
 /**
- * Движок обхода (crawler.engine). Методы: void run(CrawlJob job) — блокирует до завершения задания (DONE/CANCELLED),
- * void stop() — прерывание текущего задания, int activeThreads(), int queueSize(), String name().
+ * Движок обхода (crawler.engine). run блокирует вызывающий поток до завершения задания
+ * (очередь пуста и нет активных задач) или до остановки/отмены. Статус задания выставляет CrawlerService.
  */
 public interface CrawlEngine {
-    // TODO: методы см. Javadoc
+
+    void run(CrawlJob job);
+
+    /** Прерывание текущего задания. */
+    void stop();
+
+    int activeThreads();
+
+    int poolSize();
+
+    int queueSize();
+
+    int visitedUrls();
+
+    String name();
 }

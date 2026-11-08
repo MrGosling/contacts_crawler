@@ -8,6 +8,7 @@ spring:
 
 crawler:
   seeds-file: /app/seeds.txt
+  seeds-api-file: /app/data/seeds-api.txt
   storage-file:
     path: /app/data/contacts.jsonl
   async-log:
