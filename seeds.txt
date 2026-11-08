@@ -1,0 +1,2 @@
+# Seed-URL для планового обхода: одна строка — один URL, '#' — комментарий.
+# https://example.org/contacts

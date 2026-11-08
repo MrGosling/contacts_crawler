@@ -1,0 +1,72 @@
+spring:
+  application:
+    name: contacts-crawler
+  profiles:
+    default: dev
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  datasource:
+    url: jdbc:h2:file:./data/crawler;AUTO_SERVER=FALSE
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: update   # Q-6
+    open-in-view: false
+  h2:
+    console:
+      enabled: false
+
+server:
+  port: 8080
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+# Все настройки краулера — docs/requirements/08-nonfunctional.md
+crawler:
+  engine: executor            # threads | executor | forkjoin
+  fetcher: webclient          # webclient | resttemplate | feign
+  storage: memory             # memory | file | h2 (h2 — после этапа 4)
+  threads: 8
+  queue-capacity: 10000
+  max-depth: 2
+  max-pages-per-domain: 100
+  same-domain-only: true
+  delay-ms: 1000
+  per-host-concurrency: 1
+  max-page-size: 2MB
+  connect-timeout: 5s
+  read-timeout: 10s
+  max-redirects: 3
+  retries: 2
+  user-agent: "ContactsCrawler/1.0 (+contact@example.org)"
+  seeds: []
+  seeds-file: seeds.txt
+  excluded-extensions: [pdf, jpg, jpeg, png, gif, svg, webp, zip, rar, 7z, doc, docx, xls, xlsx, ppt, pptx, mp3, mp4, avi, exe]
+  scheduler:
+    mode: executor            # executor | spring | off
+    fixed-delay: PT1H
+    initial-delay: PT1M
+  executor:
+    queue-capacity: 1000
+    shutdown-timeout: 20s
+  forkjoin:
+    parallelism: 4
+  storage-file:
+    path: data/contacts.jsonl
+    flush-interval: 2s
+  async-log:
+    path: logs/crawler-async.log
+  api:
+    allow-delete: true
+  extract:
+    default-region: RU
+  twogis:
+    enabled: false
+    base-url: https://catalog.api.2gis.com
+    api-key: ""

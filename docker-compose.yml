@@ -1,0 +1,38 @@
+services:
+  crawler:
+    build: .
+    image: contacts-crawler:latest
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      # Любое свойство crawler.* можно переопределить, напр.: CRAWLER_THREADS: 4
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - crawler-data:/app/data
+      - crawler-logs:/app/logs
+      - ./seeds.txt:/app/seeds.txt:ro
+    mem_limit: 1g
+    stop_grace_period: 40s
+    restart: unless-stopped
+
+  # Maven в контейнере — чтобы не ставить JDK/Maven локально.
+  #   docker compose run --rm maven mvn test
+  #   docker compose run --rm maven mvn verify
+  maven:
+    profiles: ["tools"]
+    image: maven:3.9-eclipse-temurin-21
+    user: "${UID:-1000}:${GID:-1000}"
+    working_dir: /workspace
+    environment:
+      MAVEN_CONFIG: /workspace/.cache/m2
+      MAVEN_OPTS: "-Duser.home=/workspace/.cache"
+    volumes:
+      - .:/workspace
+    command: ["mvn", "-B", "test"]
+
+volumes:
+  crawler-data:
+  crawler-logs:

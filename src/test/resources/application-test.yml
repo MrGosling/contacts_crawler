@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:crawler;DB_CLOSE_DELAY=-1
+
+crawler:
+  storage: memory
+  delay-ms: 0          # D-15: только для localhost в тестах
+  scheduler:
+    mode: off
+  storage-file:
+    path: target/test-data/contacts.jsonl
+  async-log:
+    path: target/test-logs/crawler-async.log

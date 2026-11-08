@@ -1,0 +1,16 @@
+# Профиль для Docker (docs/requirements/09-docker.md)
+spring:
+  datasource:
+    url: jdbc:h2:file:/app/data/crawler
+  h2:
+    console:
+      enabled: false
+
+crawler:
+  seeds-file: /app/seeds.txt
+  storage-file:
+    path: /app/data/contacts.jsonl
+  async-log:
+    path: /app/logs/crawler-async.log
+  api:
+    allow-delete: false

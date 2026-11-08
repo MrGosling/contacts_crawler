@@ -1,0 +1,9 @@
+target/
+data/
+logs/
+.cache/
+.git/
+.idea/
+*.iml
+.env
+docs/
